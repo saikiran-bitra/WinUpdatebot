@@ -140,15 +140,19 @@ class updatebot:
                             try:
                                 if os.path.exists(r'\\' + host + '\\c$\\Program Files (x86)\\Bit9\\Parity Agent\\DasCLI.exe'):
                                     #print ('ENter x86')
-                                    if not os.path.exists(r'\\' + host + '\\c$\\temp\winpatching'):
+                                    if not os.path.exists(r'\\' + host + '\\c$\\temp\\winpatching'):
                                         prs, out = connect.Win32_Process.Create(CommandLine=r'cmd /c mkdir \\' + host + '\\c$\\temp\winpatching')
+                                    if os.path.exists(r'\\' + host + '\\c$\\' + Check_File):
+                                        prs, out = connect.Win32_Process.Create(CommandLine='cmd /c del C:\\' + Check_File)
                                     prs, out = connect.Win32_Process.Create(CommandLine=r'cmd /c "C:\Program Files (x86)\Bit9\Parity Agent\DasCLI.exe" status > ' + 'C:\\' + Bit9_File)
                                     prs, out = connect.Win32_Process.Create(CommandLine='cmd /c echo Bit9 Check > C:\\' + Check_File)
                                     h.append(host)
                                 else:
                                     #print ('enter')
-                                    if not os.path.exists(r'\\' + host + '\\c$\\temp\winpatching'):
+                                    if not os.path.exists(r'\\' + host + '\\c$\\temp\\winpatching'):
                                         prs, out = connect.Win32_Process.Create(CommandLine=r'cmd /c mkdir \\' + host + '\\c$\\temp\winpatching')
+                                    if os.path.exists(r'\\' + host + '\\c$\\' + Check_File):
+                                        prs, out = connect.Win32_Process.Create(CommandLine='cmd /c del C:\\' + Check_File)
                                     prs, out = connect.Win32_Process.Create(CommandLine=r'cmd /c "C:\Program Files\Bit9\Parity Agent\DasCLI.exe" status > ' + 'C:\\' + Bit9_File)
                                     prs, out = connect.Win32_Process.Create(CommandLine='cmd /c echo Bit9 Check > C:\\' + Check_File)
                                     h.append(host)
@@ -164,6 +168,13 @@ class updatebot:
                 for host in h:
                     host = host.replace('\n', '')
                     C_F = r'\\' + host + '\\c$\\' + Check_File
+                    while not os.path.exists(C_F): and count < check_count:
+                        #size = os.stat(r'\\' + host + '\\c$\\' + Check_File).st_size
+                        count += 1
+                        self.sleep25()
+                    if count == check_count:
+                        print ('ERROR: Taking time to create Bit9 report, please check manually')
+                        continue
                     with open(C_F, 'rb') as c:
                         content = (((c.read().replace(b'\x00', b'')).replace(b'\r\n', b'')).replace(b'\xff\xfe', b'')).decode()
                         if 'Bit9 Check' in content:
