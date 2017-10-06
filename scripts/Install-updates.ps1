@@ -42,11 +42,12 @@ Try {
             $updatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
             $Installer = $updatesession.CreateUpdateInstaller()
             
-            If (($update.IsDownLoaded -eq "True") -or ($update.IsDownLoaded -eq "False")){ 
+            If (($update.IsDownLoaded -eq $True) -or ($update.IsDownLoaded -eq $False)){ 
                
-               If ($update.IsDownLoaded -eq "False") {
+               If ($update.IsDownLoaded -eq $False) {
                    Try {
 
+                   $u = $update.Title
                    $NULL = $UpdatesToDownload.Add($Update)
                    $Downloader = $UpdateSession.CreateUpdateDownloader()
                    $Downloader.Updates = $UpdatesToDownload
@@ -56,12 +57,12 @@ Try {
 
                    Catch {
 
-                   echo Exception
+                   $u | Add-Content $Install_Updates_Error_Log
 
                    }
                }
 
-               If ($update.IsDownLoaded -eq "True") {
+               If ($update.IsDownLoaded -eq $True) {
 
                $Update | foreach-Object {$updatesToInstall.Add($_) }
                $Check = "True"

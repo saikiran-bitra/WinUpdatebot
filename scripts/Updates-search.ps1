@@ -25,34 +25,24 @@ Try {
                 
                 $searchresult = $updatesearcher.Search("IsInstalled=0 and Type='Software'") 
    
-                echo "$searchresult.Updates.Count is the update count"
-
-                
+                             
                 If ($searchresult.Updates.Count -gt 0) {
+
                     $count = $searchresult.Updates.Count
-                                        
                     Write-Verbose "Iterating through list of updates"
                     For ($i=0; $i -lt $Count; $i++) {
                         
                         $update = $searchresult.Updates.Item($i)
                         
-                        
-                        If (($update.IsDownLoaded -eq "True") -or ($update.IsDownLoaded -eq "False") { 
+                        $title = $update.Title
                             
-                            $title = $update.Title
-                            
-                            "$title" | Add-Content $Updates_Search_Log
-                            
-                            $Check = "True"
-                            }
+                        "$title" | Add-Content $Updates_Search_Log
+                         
                         }
-                    If (!($Check -eq "True")){
-                       
-                       "   No Updates Found..." | Add-Content $Updates_Search_Log
-                             
-                            }
+                    
                         
                     }
+
                 Else {
                     "   No Updates Found..." | Add-Content $Updates_Search_Log
                     }              
